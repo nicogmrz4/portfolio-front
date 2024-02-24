@@ -1,0 +1,100 @@
+<h2 mat-dialog-title>Edit Project</h2>
+<mat-dialog-content>
+	<form
+		id="form"
+		#projectForm="ngForm"
+		(ngSubmit)="onSubmit()"
+		[formGroup]="projectFormGroup"
+	>
+		<div class="tw-grid tw-grid-cols-2 tw-gap-8">
+			<div class="tw-flex tw-flex-col">
+				<mat-form-field class="tw-w-full">
+					<!-- Name filed -->
+					<mat-label>Name</mat-label>
+					<input class="tw-w-full" matInput formControlName="name" />
+					@if (projectFormGroup.name.invalid) {
+						<mat-error>{{ projectFormGroup.getNameErrorMessage() }}</mat-error>
+					}
+				</mat-form-field>
+				<!-- Description field -->
+				<mat-form-field class="tw-w-full tw-h-full">
+					<mat-label>Description</mat-label>
+					<textarea
+						style="resize: none"
+						matInput
+						formControlName="description"
+						rows="10"
+					>
+					</textarea>
+					<mat-hint align="end"
+						>{{ projectFormGroup.description.value.length }}/255</mat-hint
+					>
+					@if (projectFormGroup.description.invalid) {
+						<mat-error>{{
+							projectFormGroup.getDescriptionErrorMessage()
+						}}</mat-error>
+					}
+				</mat-form-field>
+			</div>
+			<div>
+				<mat-form-field
+					class="tw-cursor-pointer"
+					(click)="hiddenInput.click()"
+					class="tw-w-full"
+				>
+					<mat-label>Preview</mat-label>
+					<input
+						matInput
+						readonly
+						class="tw-cursor-pointer"
+						type="text"
+						formControlName="preview"
+					/>
+					<mat-icon matSuffix>folder_open</mat-icon>
+					@if (projectFormGroup.preview.invalid) {
+						<mat-error>{{
+							projectFormGroup.getPreviewErrorMessage()
+						}}</mat-error>
+					}
+				</mat-form-field>
+				<input
+					hidden
+					type="file"
+					(change)="onSelectFile($event)"
+					#hiddenInput
+				/>
+				<img
+					class="tw-w-full tw-h-60 tw-mb-6 tw-object-cover"
+					[src]="
+						!!previewAsDataURL
+							? previewAsDataURL
+							: url + projectFormGroup.preview.value
+					"
+				/>
+				<button
+					mat-raised-button
+					(click)="hiddenInput.click()"
+					type="button"
+					color="primary"
+					class="tw-w-full"
+				>
+					UPLOAD PREVIEW
+					<mat-icon matTextSuffix>upload_file</mat-icon>
+				</button>
+			</div>
+		</div>
+	</form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+	<button mat-button mat-dialog-close color="warn">Cancel</button>
+	<button
+		mat-raised-button
+		type="submit"
+		form="form"
+		color="primary"
+		[disabled]="projectFormGroup.pristine"
+	>
+		Save
+	</button>
+</mat-dialog-actions>

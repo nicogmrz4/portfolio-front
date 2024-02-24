@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HomeModule } from '@modules/home/home.module';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 @NgModule({
   declarations: [AppComponent],
@@ -14,6 +15,7 @@ import { HomeModule } from '@modules/home/home.module';
       provide: LocationStrategy,
       useClass: PathLocationStrategy,
     },
+    provideAnimationsAsync(),
   ],
   bootstrap: [AppComponent],
 })

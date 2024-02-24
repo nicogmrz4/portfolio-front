@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>{{config.title}}</h2>
+<mat-dialog-content>
+    <p class="tw-text-justify">{{ config.content }}</p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <div class="tw-flex tw-gap-1">
+        <button mat-raised-button color="warn" [mat-dialog-close]="false">Cancel</button>
+        <button mat-stroked-button color="primary" (click)="accept$.next(true)">Accept</button>
+    </div>
+</mat-dialog-actions>
+
