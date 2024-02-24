@@ -5,15 +5,13 @@ import { InputCopyComponent } from './components/input-copy/input-copy.component
 
 @NgModule({
   declarations: [
-    InputCopyComponent,
-    SectionTitleComponent
   ],
   exports: [
-    InputCopyComponent,
     SectionTitleComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    SectionTitleComponent
   ]
 })
 export class SharedModule { }

@@ -13,18 +13,12 @@ import { ContactComponent } from './sections/contact/contact.component';
 
 @NgModule({
   declarations: [
-    HomeComponent,
-    MeComponent,
-    ProjectCardComponent,
-    SkillCardComponent,
-    ProjectsComponent,
-    SkillsComponent,
-    ContactComponent
   ],
   imports: [
     CommonModule,
     HomeRoutingModule,
     SharedModule,
+    HomeComponent,
   ]
 })
 export class HomeModule { }

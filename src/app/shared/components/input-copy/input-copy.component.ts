@@ -3,7 +3,8 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-input-copy',
   templateUrl: './input-copy.component.html',
-  styleUrl: './input-copy.component.scss'
+  styleUrl: './input-copy.component.scss',
+  standalone: true
 })
 export class InputCopyComponent {
   disabled: boolean = true;
