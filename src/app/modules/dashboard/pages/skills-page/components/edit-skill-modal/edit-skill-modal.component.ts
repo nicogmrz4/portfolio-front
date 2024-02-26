@@ -62,7 +62,6 @@ export class EditSkillModalComponent implements OnInit {
 
 	initForm() {
 		this.skillFormGroup.name.setValue(this.skill.name);
-		this.skillFormGroup.description.setValue(this.skill.description);
 		this.skillFormGroup.icon.setValue(this.skill.icon);
 	}
 
@@ -82,7 +81,6 @@ export class EditSkillModalComponent implements OnInit {
 
 		let skillDTO = new SkillDTO(
 			this.skillFormGroup.name.value,
-			this.skillFormGroup.description.value,
 		);
 		
 		// if icon isn't null let's make a double request, one for update data and other for the icon

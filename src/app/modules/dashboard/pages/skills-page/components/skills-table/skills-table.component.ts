@@ -30,7 +30,7 @@ export class SkillsTableComponent implements AfterViewInit, OnInit {
 	dataSource = new SkillsTableDataSource();
 
 	/** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-	displayedColumns = ['id', 'name', 'description', 'icon', 'actions'];
+	displayedColumns = ['id', 'name', 'icon', 'actions'];
 
 	constructor(
 		private skillSvc: SkillsService,

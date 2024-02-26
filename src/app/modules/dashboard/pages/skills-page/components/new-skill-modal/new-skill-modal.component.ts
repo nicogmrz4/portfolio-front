@@ -66,7 +66,6 @@ export class NewSkillModalComponent {
 
 		let skillDTO = new SkillDTO(
 			this.skillFormGroup.name.value,
-			this.skillFormGroup.description.value,
 		);
 
 		this.skillsSvc

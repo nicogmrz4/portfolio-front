@@ -9,7 +9,6 @@ import { Skill } from '@modules/dashboard/interfaces/skill';
 export interface SkillsTableItem {
   id: number;
   name: string;
-  description: string;
   icon: string;
 }
 

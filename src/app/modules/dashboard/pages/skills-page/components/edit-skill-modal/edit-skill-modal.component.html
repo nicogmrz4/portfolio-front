@@ -13,17 +13,6 @@
 						<mat-error>{{ skillFormGroup.getNameErrorMessage() }}</mat-error>
 					}
 				</mat-form-field>
-				<!-- Description -->
-				<mat-form-field class="tw-w-full">
-					<mat-label>Description</mat-label>
-					<textarea matInput formControlName="description" rows="10"></textarea>
-					<mat-hint>A description about the skill.</mat-hint>
-					@if (skillFormGroup.description.invalid) {
-						<mat-error>{{
-							skillFormGroup.getDescriptionErrorMessage()
-						}}</mat-error>
-					}
-				</mat-form-field>
 			</div>
 			<!-- Right side -->
 			<div>
