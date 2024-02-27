@@ -21,6 +21,8 @@ import { SkillsService } from '@modules/dashboard/services/skills.service';
 import { fileToDataURL } from '@utils/index';
 import { asyncScheduler, concatAll, last, scheduled } from 'rxjs';
 import { environment } from '../../../../../../../environments/environment';
+import { SkillCardComponent } from '@modules/home/components/skill-card/skill-card.component';
+import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
 	selector: 'app-edit-skill-modal',
@@ -37,6 +39,8 @@ import { environment } from '../../../../../../../environments/environment';
 		MatHint,
 		ReactiveFormsModule,
 		MatIconModule,
+		MatSliderModule,
+		SkillCardComponent,
 		HttpClientModule,
 	],
 	providers: [SkillsService],
@@ -53,11 +57,15 @@ export class EditSkillModalComponent implements OnInit {
 	constructor(
 		private dialogRef: MatDialogRef<EditSkillModalComponent>,
 		private skillsSvc: SkillsService,
-		@Inject(MAT_DIALOG_DATA) private skill: Skill,
+		@Inject(MAT_DIALOG_DATA) public skill: Skill,
 	) {}
 
 	ngOnInit(): void {
 		this.initForm();
+	}
+
+	formatLabel(value: number): string {
+		return `${value}px`;
 	}
 
 	initForm() {
@@ -81,6 +89,7 @@ export class EditSkillModalComponent implements OnInit {
 
 		let skillDTO = new SkillDTO(
 			this.skillFormGroup.name.value,
+			this.skillFormGroup.iconSize.value
 		);
 		
 		// if icon isn't null let's make a double request, one for update data and other for the icon

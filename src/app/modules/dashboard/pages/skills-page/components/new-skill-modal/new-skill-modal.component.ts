@@ -11,6 +11,7 @@ import {
 	MatDialogRef,
 	MatDialogTitle,
 } from '@angular/material/dialog';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatError, MatHint, MatInputModule } from '@angular/material/input';
 import { SkillDTO } from '@modules/dashboard/dto/skillDTO';
@@ -18,6 +19,7 @@ import { SkillFormGroup } from '@modules/dashboard/pages/projects-page/forms-gro
 import { SkillsService } from '@modules/dashboard/services/skills.service';
 import { fileToDataURL } from '@utils/index';
 import { switchMap } from 'rxjs';
+import { SkillCardComponent } from '@modules/home/components/skill-card/skill-card.component';
 
 @Component({
 	selector: 'app-new-skill-modal',
@@ -34,6 +36,8 @@ import { switchMap } from 'rxjs';
 		MatHint,
 		ReactiveFormsModule,
 		MatIconModule,
+		MatSliderModule,
+		SkillCardComponent,
 		HttpClientModule,
 	],
 	providers: [SkillsService],
@@ -49,6 +53,10 @@ export class NewSkillModalComponent {
 		private dialogRef: MatDialogRef<NewSkillModalComponent>,
 		private skillsSvc: SkillsService,
 	) {}
+
+	formatLabel(value: number): string {
+		return `${value}px`;
+	}
 
 	onSelectFile(event: any) {
 		if (event.target.files[0] != null) {
@@ -66,6 +74,7 @@ export class NewSkillModalComponent {
 
 		let skillDTO = new SkillDTO(
 			this.skillFormGroup.name.value,
+			this.skillFormGroup.iconSize.value,
 		);
 
 		this.skillsSvc
@@ -76,7 +85,7 @@ export class NewSkillModalComponent {
 				),
 			)
 			.subscribe({
-        next: (skill => this.dialogRef.close(skill))
-      });
+				next: (skill) => this.dialogRef.close(skill),
+			});
 	}
 }

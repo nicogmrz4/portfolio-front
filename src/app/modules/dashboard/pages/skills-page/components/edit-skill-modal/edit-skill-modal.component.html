@@ -17,7 +17,7 @@
 			<!-- Right side -->
 			<div>
 				<!-- Icon -->
-				<div>
+				<div class="tw-flex tw-flex-col tw-items-center">
 					<mat-form-field
 						class="tw-cursor-pointer"
 						(click)="hiddenInput.click()"
@@ -42,22 +42,21 @@
 						(change)="onSelectFile($event)"
 						#hiddenInput
 					/>
-					<img
-						class="tw-w-full tw-h-60 tw-mb-6 tw-object-cover"
-						[src]="
-							!!iconAsDataURL ? iconAsDataURL : url + skillFormGroup.icon.value
-						"
-					/>
-					<button
-						mat-raised-button
-						(click)="hiddenInput.click()"
-						type="button"
-						color="primary"
-						class="tw-w-full"
+					<app-skill-card
+						[dataUrl]="iconAsDataURL"
+						[icon]="iconAsDataURL ? '' : skill.icon"
+						[size]="skillFormGroup.iconSize.value"
+					></app-skill-card>
+					<mat-slider
+						value="300"
+						min="0"
+						max="300"
+						step="5"
+						discrete
+						[displayWith]="formatLabel"
 					>
-						UPLOAD ICON
-						<mat-icon matTextSuffix>upload_file</mat-icon>
-					</button>
+						<input matSliderThumb formControlName="iconSize" />
+					</mat-slider>
 				</div>
 			</div>
 		</div>

@@ -1,70 +1,73 @@
 <h2 mat-dialog-title>Create Skill</h2>
 <mat-dialog-content>
-  <form [formGroup]="skillFormGroup" id="skillForm" (ngSubmit)="onSubmit()">
-    <div class="tw-grid tw-grid-cols-2 tw-gap-4">
-      <!-- Left side -->
-      <div>
-        <!-- Name -->
-        <mat-form-field class="tw-w-full">
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" type="text" />
-          <mat-hint>Choose a name for this skill.</mat-hint>
-          @if (skillFormGroup.name.invalid) {
-            <mat-error>{{ skillFormGroup.getNameErrorMessage() }}</mat-error>
-          }
-        </mat-form-field>
-      </div>
-      <!-- Right side -->
-      <div>
-        <!-- Icon -->
-        <div>
-          <mat-form-field
-            class="tw-cursor-pointer"
-            (click)="hiddenInput.click()"
-            class="tw-w-full"
-          >
-            <mat-label>Icon</mat-label>
-            <input
-              matInput
-              formControlName="icon"
-              readonly
-              class="tw-cursor-pointer"
-              type="text"
-            />
-            <mat-icon matSuffix>folder_open</mat-icon>
-            @if (skillFormGroup.icon.invalid) {
-              <mat-error>{{ skillFormGroup.getIconErrorMessage() }}</mat-error>
-            }
-          </mat-form-field>
-          <input
-            hidden
-            type="file"
-            (change)="onSelectFile($event)"
-            #hiddenInput
-          />
-          <img
-            class="tw-w-full tw-h-60 tw-mb-6 tw-object-cover"
-            [src]="iconAsDataURL"
-          />
-          <button
-            mat-raised-button
-            (click)="hiddenInput.click()"
-            type="button"
-            color="primary"
-            class="tw-w-full"
-          >
-            UPLOAD ICON
-            <mat-icon matTextSuffix>upload_file</mat-icon>
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
+	<form [formGroup]="skillFormGroup" id="skillForm" (ngSubmit)="onSubmit()">
+		<div class="tw-grid tw-grid-cols-2 tw-gap-4">
+			<!-- Left side -->
+			<div>
+				<!-- Name -->
+				<mat-form-field class="tw-w-full">
+					<mat-label>Name</mat-label>
+					<input matInput formControlName="name" type="text" />
+					<mat-hint>Choose a name for this skill.</mat-hint>
+					@if (skillFormGroup.name.invalid) {
+						<mat-error>{{ skillFormGroup.getNameErrorMessage() }}</mat-error>
+					}
+				</mat-form-field>
+			</div>
+			<!-- Right side -->
+			<div>
+				<!-- Icon -->
+				<div class="tw-flex tw-flex-col tw-items-center">
+					<mat-form-field
+						class="tw-cursor-pointer"
+						(click)="hiddenInput.click()"
+						class="tw-w-full"
+					>
+						<mat-label>Icon</mat-label>
+						<input
+							matInput
+							formControlName="icon"
+							readonly
+							class="tw-cursor-pointer"
+							type="text"
+						/>
+						<mat-icon matSuffix>folder_open</mat-icon>
+						@if (skillFormGroup.icon.invalid) {
+							<mat-error>{{ skillFormGroup.getIconErrorMessage() }}</mat-error>
+						}
+					</mat-form-field>
+					<input
+						hidden
+						type="file"
+						(change)="onSelectFile($event)"
+						#hiddenInput
+					/>
+						<app-skill-card
+							[dataUrl]="iconAsDataURL"
+							[size]="skillFormGroup.iconSize.value"
+						></app-skill-card>
+						<mat-slider
+							value="300"
+							min="0"
+							max="300"
+							step="5"
+              [disabled]="!iconFile"
+							discrete
+							[displayWith]="formatLabel"
+						>
+							<input matSliderThumb formControlName="iconSize" />
+						</mat-slider>
+
+				</div>
+			</div>
+		</div>
+	</form>
 </mat-dialog-content>
 <!-- Actions -->
 <mat-dialog-actions align="end">
-  <button mat-button color="warn" [mat-dialog-close]="false">Cancel</button> <!-- Returns false on close-->
-  <button mat-raised-button color="primary" type="submit" form="skillForm">
-    Create
-  </button>
+	<button mat-button color="warn" [mat-dialog-close]="false">Cancel</button>
+	<!-- Returns false on close-->
+	<button mat-raised-button color="primary" type="submit" form="skillForm">
+		Create
+	</button>
 </mat-dialog-actions>
