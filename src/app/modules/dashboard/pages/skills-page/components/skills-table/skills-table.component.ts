@@ -56,9 +56,10 @@ export class SkillsTableComponent implements AfterViewInit, OnInit {
 			data: skill,
 		});
 
-		dialogRef.afterClosed().subscribe((result) => {
-			if (result == false) return;
-			this.dataSource.replaceSkillByIndex(result, index);
+		dialogRef.afterClosed().subscribe((skill? : Skill) => {
+			if (skill) {
+				this.dataSource.replaceSkillByIndex(skill, index);
+			}
 		});
 	}
 
