@@ -71,6 +71,7 @@ export class EditSkillModalComponent implements OnInit {
 	initForm() {
 		this.skillFormGroup.name.setValue(this.skill.name);
 		this.skillFormGroup.icon.setValue(this.skill.icon);
+		this.skillFormGroup.iconSize.setValue(this.skill.iconSize)
 	}
 
 	onSelectFile(event: any) {
