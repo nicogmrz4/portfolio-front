@@ -35,6 +35,43 @@
 						}}</mat-error>
 					}
 				</mat-form-field>
+				<!-- Tags  -->
+				<mat-form-field>
+					<mat-label>Tags</mat-label>
+					<mat-chip-grid #chipGrid aria-label="Tags selection">
+						@for (tag of selectedTags; track tag) {
+							<mat-chip-row (removed)="removeTag($index)">
+								{{ tag.name }}
+								<button matChipRemove [attr.aria-label]="'remove ' + tag.name">
+									<mat-icon>cancel</mat-icon>
+								</button>
+							</mat-chip-row>
+						}
+					</mat-chip-grid>
+					<input
+						[formControl]="tagInputControl"
+						placeholder="Add Tags..."
+						#tagInput
+						[matChipInputFor]="chipGrid"
+						[matAutocomplete]="auto"
+						(matChipInputTokenEnd)="addNewTag($event)"
+					/>
+					@if (tagInputLoading) {
+						<mat-spinner
+							matSuffix
+							[diameter]="20"
+							style="float: right; margin-right: 14px"
+						></mat-spinner>
+					}
+					<mat-autocomplete
+						#auto="matAutocomplete"
+						(optionSelected)="selectTag($event)"
+					>
+						@for (tag of filteredTags$ | async; track tag) {
+							<mat-option [value]="tag">{{ tag.name }}</mat-option>
+						}
+					</mat-autocomplete>
+				</mat-form-field>
 			</div>
 			<div>
 				<mat-form-field
