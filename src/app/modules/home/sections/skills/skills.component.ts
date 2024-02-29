@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { JsonPipe } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { SkillCardComponent } from '@modules/home/components/skill-card/skill-card.component';
+import { CommonService } from '@modules/home/services/common.service';
 import { SectionTitleComponent } from '@shared/components/section-title.component';
 
 @Component({
@@ -9,9 +11,18 @@ import { SectionTitleComponent } from '@shared/components/section-title.componen
   standalone: true,
   imports: [
     SkillCardComponent,
-    SectionTitleComponent
+    SectionTitleComponent,
+  ],
+  providers: [
+    CommonService
   ]
 })
-export class SkillsComponent {
+export class SkillsComponent implements OnInit {
+  skills: any[] = [];
 
+  constructor(private commonSvc: CommonService) {}
+
+  ngOnInit(): void {
+    this.commonSvc.getSkills().subscribe(res => this.skills = res['hydra:member']);
+  }
 }

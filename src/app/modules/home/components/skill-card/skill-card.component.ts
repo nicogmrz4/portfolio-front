@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { environment } from '../../../../../environments/environment.development';
 
 @Component({
   selector: 'app-skill-card',
@@ -6,4 +7,10 @@ import { Component } from '@angular/core';
   styleUrl: './skill-card.component.scss',
   standalone: true
 })
-export class SkillCardComponent { }
+export class SkillCardComponent {
+  @Input() name: string = '';
+  @Input() icon: string = '';
+  @Input() dataUrl: string = '';
+  @Input() size: number = 150;
+  url: string = environment.apiUrl;
+}

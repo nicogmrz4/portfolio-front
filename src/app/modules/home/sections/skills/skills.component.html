@@ -2,12 +2,9 @@
     <header class="tw-my-16">
         <app-section-title title="HABILIDADES"></app-section-title>
     </header>
-    <div class="tw-flex tw-flex-wrap tw-gap-8">
-        <app-skill-card></app-skill-card>
-        <app-skill-card></app-skill-card>
-        <app-skill-card></app-skill-card>
-        <app-skill-card></app-skill-card>
-        <app-skill-card></app-skill-card>
-        <app-skill-card></app-skill-card>
+    <div class="tw-flex tw-flex-wrap tw-justify-center tw-gap-8">
+        @for (skill of skills; track $index) {
+            <app-skill-card [icon]="skill.icon" [name]="skill.name" [size]="skill.iconSize"></app-skill-card>
+        }
     </div>
 </section>

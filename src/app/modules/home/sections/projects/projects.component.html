@@ -3,9 +3,8 @@
         <app-section-title title="PROYECTOS"></app-section-title>
     </header>
     <div class="tw-grid tw-gap-6 md:tw-grid-cols-2 md:tw-gap-12">
-        <app-project-card></app-project-card>
-        <app-project-card></app-project-card>
-        <app-project-card></app-project-card>
-        <app-project-card></app-project-card>
+        @for (project of projects; track project) {
+            <app-project-card [project]="project"></app-project-card>
+        }
     </div>
 </section>
