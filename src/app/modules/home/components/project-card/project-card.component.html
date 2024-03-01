@@ -1,15 +1,15 @@
 <div class="tw-shadow-lg tw-h-full tw-flex tw-flex-col">
   <img class="tw-w-full tw-aspect-video tw-object-cover tw-object-center" [src]="url + project.preview" />
-  <div class="tw-px-5 tw-pb-5 tw-pt-4 tw-border-2 tw-border-primary tw-border-t-0 tw-h-full">
-    <h3 class="tw-text-3xl tw-font-bold tw-mb-2">{{ project.name }}</h3>
-    <div class="tw-flex tw-flex-wrap tw-gap-2 tw-mb-2">
+  <div class="tw-px-5 tw-pb-6 tw-border-2 tw-border-primary tw-border-t-0 tw-h-full">
+    <h3 class="tw-text-3xl tw-font-medium tw-mt-6 tw-mb-3">{{ project.name }}</h3>
+    <div class="tw-flex tw-flex-wrap tw-gap-3 tw-mb-2">
       @for (tag of project.tags; track tag) {
         <div class="tw-rounded-full tw-border tw-border-primary tw-px-3">
           <span class="tw-text-sm tw-text-primary">{{ tag.name }}</span>
         </div>
       }
     </div>
-    <p class="tw-text-lg tw-tracking-wider">
+    <p class="tw-text-lg tw-tracking-wider tw-leading-9">
       {{ project.description }}
     </p>
   </div>
