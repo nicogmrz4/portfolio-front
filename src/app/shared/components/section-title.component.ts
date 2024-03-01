@@ -4,7 +4,7 @@ import { Component, Input, ViewEncapsulation } from '@angular/core';
 	selector: 'app-section-title',
 	template: `
 		<h3
-			class="tw-font-black tw-text-4xl tw-text-blue-500 tw-w-fit"
+			class="tw-font-black tw-text-4xl tw-text-primary tw-w-fit"
 		>
 			{{ title }}
 		</h3>
