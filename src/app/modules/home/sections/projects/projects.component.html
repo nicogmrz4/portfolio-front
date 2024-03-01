@@ -2,7 +2,7 @@
     <header class="tw-my-16">
         <app-section-title title="PROYECTOS"></app-section-title>
     </header>
-    <div class="tw-grid tw-gap-6 md:tw-grid-cols-2 md:tw-gap-12">
+    <div class="tw-flex tw-justify-center tw-flex-wrap tw-gap-8">
         @for (project of projects; track project) {
             <app-project-card [project]="project"></app-project-card>
         }
