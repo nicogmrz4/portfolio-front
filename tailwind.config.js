@@ -13,6 +13,7 @@ module.exports = {
 			colors: {
 				primary: "#FFCC00",
 				secondary: "#AFFF00",
+				"rich-black": "#101322",
 				"primary": {
 					50: "#FFF0B6",
 					100: "#FFE992",
