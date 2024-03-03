@@ -3,7 +3,7 @@
     <div
         [hidden]="toolTipHidden"
         (animationend)="toolTipAnimationEnd($event)"
-        class="tooltip tw-bg-primary tw-w-fit tw-px-2 tw-py-1 tw-rounded-xl tw-animate-duration-fast"
+        class="tooltip tw-bg-primary tw-w-fit tw-px-2 tw-py-1 tw-rounded-xl tw-animate-duration-fast tw-z-50"
         [class]="{
             'tw-animate-fade-in': (toolTip$ | async),
             'tw-animate-fade-out': !(toolTip$ | async),
