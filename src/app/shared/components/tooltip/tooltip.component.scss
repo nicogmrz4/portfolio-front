@@ -1,0 +1,74 @@
+$margin: .8rem;
+
+.tooltip {
+    position: absolute;
+}
+
+.tooltip__bottom {
+    top: calc(100% + $margin);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tooltip__bottom::after {
+    content: '';
+    background-color: inherit;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+}
+
+.tooltip__top {
+    top: -$margin;
+    left: 50%;
+    transform: translateX(-50%) translateY(-100%);
+}
+
+.tooltip__top::after {
+    content: '';
+    background-color: inherit;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 50%;
+    top: 100%;
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+}
+
+.tooltip__left {
+    top: 50%;
+    left: calc(0px - $margin);
+    transform: translateX(-100%) translateY(-50%);
+}
+
+.tooltip__left::after {
+    content: '';
+    background-color: inherit;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 100%;
+    top: 50%;
+    transform: translateX(-55%) translateY(-50%) rotate(45deg);
+}
+
+.tooltip__right {
+    top: 50%;
+    left: calc(100% + $margin);
+    transform: translateX(0) translateY(-50%);
+}
+
+.tooltip__right::after {
+    content: '';
+    background-color: inherit;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 0;
+    top: 50%;
+    transform: translateX(-55%) translateY(-50%) rotate(45deg);
+}
+

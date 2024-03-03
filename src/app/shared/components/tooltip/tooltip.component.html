@@ -1,0 +1,18 @@
+<div class="tw-relative" (click)="show()" (mousemove)="onHover()" (mouseleave)="onLossHover()">
+    <ng-content></ng-content>
+    <div
+        [hidden]="toolTipHidden"
+        (animationend)="toolTipAnimationEnd($event)"
+        class="tooltip tw-bg-primary tw-w-fit tw-px-2 tw-py-1 tw-rounded-xl tw-animate-duration-fast"
+        [class]="{
+            'tw-animate-fade-in': (toolTip$ | async),
+            'tw-animate-fade-out': !(toolTip$ | async),
+            'tooltip__left': position == 'left',
+            'tooltip__right': position == 'right',
+            'tooltip__top': position == 'top',
+            'tooltip__bottom': position == 'bottom'
+        }"
+    >
+        <p class="tw-text-rich-black tw-font-medium tw-w-96 tw-max-w-fit">{{ tip }}</p>
+    </div>
+</div>
