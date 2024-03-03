@@ -1,0 +1,10 @@
+.tooltip::after {
+    content: '';
+    background-color: inherit;
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    left: 50%;
+    top: 0;
+    transform: translateX(-50%) translateY(-50%) rotate(45deg);
+}
