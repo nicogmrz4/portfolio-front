@@ -23,6 +23,7 @@ import { asyncScheduler, concatAll, last, scheduled } from 'rxjs';
 import { environment } from '../../../../../../../environments/environment';
 import { SkillCardComponent } from '@modules/home/components/skill-card/skill-card.component';
 import { MatSliderModule } from '@angular/material/slider';
+import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
 
 @Component({
 	selector: 'app-edit-skill-modal',
@@ -53,11 +54,11 @@ export class EditSkillModalComponent implements OnInit {
 	skillFormGroup: SkillFormGroup = new SkillFormGroup();
 	url: string = environment.apiUrl;
 
-
 	constructor(
 		private dialogRef: MatDialogRef<EditSkillModalComponent>,
 		private skillsSvc: SkillsService,
 		@Inject(MAT_DIALOG_DATA) public skill: Skill,
+		private loadingSvc: LoadingLayerService,
 	) {}
 
 	ngOnInit(): void {
@@ -71,7 +72,7 @@ export class EditSkillModalComponent implements OnInit {
 	initForm() {
 		this.skillFormGroup.name.setValue(this.skill.name);
 		this.skillFormGroup.icon.setValue(this.skill.icon);
-		this.skillFormGroup.iconSize.setValue(this.skill.iconSize)
+		this.skillFormGroup.iconSize.setValue(this.skill.iconSize);
 	}
 
 	onSelectFile(event: any) {
@@ -87,12 +88,12 @@ export class EditSkillModalComponent implements OnInit {
 
 	onSubmit() {
 		if (this.skillFormGroup.valid == false) return;
-
+		this.loadingSvc.loading = true;
 		let skillDTO = new SkillDTO(
 			this.skillFormGroup.name.value,
-			this.skillFormGroup.iconSize.value
+			this.skillFormGroup.iconSize.value,
 		);
-		
+
 		// if icon isn't null let's make a double request, one for update data and other for the icon
 		if (this.iconFile) {
 			let submitForm$ = scheduled(
@@ -103,15 +104,19 @@ export class EditSkillModalComponent implements OnInit {
 				asyncScheduler,
 			).pipe(concatAll(), last());
 
-			submitForm$.subscribe((editedSkill: Skill) =>
-				this.dialogRef.close(editedSkill),
-			);
+			submitForm$.subscribe((editedSkill: Skill) => {
+				this.loadingSvc.loading = false;
+				this.dialogRef.close(editedSkill);
+			});
 			return;
 		}
 
 		// if icon is null let's make a single request for update data
 		this.skillsSvc
 			.editSkill(skillDTO, this.skill.id)
-			.subscribe((editedSkill: Skill) => this.dialogRef.close(editedSkill));
+			.subscribe((editedSkill: Skill) => {
+				this.dialogRef.close(editedSkill)
+				this.loadingSvc.loading = false;
+			});
 	}
 }

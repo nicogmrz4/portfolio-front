@@ -12,6 +12,7 @@ import { EditProjectModalComponent } from '../edit-project-modal/edit-project-mo
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from '@modules/dashboard/components/confirm-dialog/confirm-dialog.component';
 import { switchMap } from 'rxjs';
+import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
 
 @Component({
 	selector: 'app-projects-table',
@@ -36,6 +37,7 @@ export class ProjectsTableComponent implements AfterViewInit, OnInit {
 
 	constructor(
 		private projectsSvc: ProjectsService,
+		private loadingSvc: LoadingLayerService,
 		private dialog: MatDialog,
 	) {}
 
@@ -43,9 +45,11 @@ export class ProjectsTableComponent implements AfterViewInit, OnInit {
 	displayedColumns = ['id', 'name', 'description', 'actions'];
 
 	ngOnInit(): void {
+		this.loadingSvc.loading = true;
 		this.projectsSvc.getProjects().subscribe({
 			next: (res) => {
 				this.dataSource.setProjects(res['hydra:member']);
+				this.loadingSvc.loading = false;
 			},
 		});
 	}
@@ -70,7 +74,7 @@ export class ProjectsTableComponent implements AfterViewInit, OnInit {
 
 		dialogRef.afterClosed().subscribe((result) => {
 			if (result) {
-        console.log(result);
+				console.log(result);
 				this.dataSource.replaceByIndex(result, this.targetIndexEdited);
 			}
 		});
@@ -78,7 +82,7 @@ export class ProjectsTableComponent implements AfterViewInit, OnInit {
 
 	openConfirmDelete(project: Project, index: number): void {
 		// Open confirm dialog
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: 'Are you sure to proced?',
 				content: `
@@ -90,11 +94,17 @@ export class ProjectsTableComponent implements AfterViewInit, OnInit {
 			autoFocus: false,
 		});
 
-    // On accept dialog
+		// On accept dialog
 		dialogRef.componentInstance
 			.onAccept()
-			.pipe(switchMap(() => this.projectsSvc.deleteProject(project.id)))
+			.pipe(
+				switchMap(() => {
+					this.loadingSvc.loading = true;
+					return this.projectsSvc.deleteProject(project.id);
+				}),
+			)
 			.subscribe(() => {
+				this.loadingSvc.loading = false;
 				this.dataSource.deleteByIndex(index);
 				dialogRef.close();
 			});

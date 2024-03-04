@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { NavegationComponent } from './components/navegation/navegation.component';
 import { RouterOutlet } from '@angular/router';
+import { LoadingLayerComponent } from './components/loading-layer.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,7 +10,8 @@ import { RouterOutlet } from '@angular/router';
   standalone: true,
   imports: [
     NavegationComponent,
-    RouterOutlet
+    RouterOutlet,
+    LoadingLayerComponent,
   ]
 })
 export class DashboardComponent {

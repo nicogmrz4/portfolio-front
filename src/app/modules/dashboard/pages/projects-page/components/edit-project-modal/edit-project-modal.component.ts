@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import {
+	Component,
+	ElementRef,
+	Inject,
+	OnInit,
+	ViewChild,
+} from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -31,8 +37,12 @@ import { environment } from '../../../../../../../environments/environment';
 import { ProjectTag } from '@modules/dashboard/interfaces/projectTag';
 import { ProjectTagDTO } from '@modules/dashboard/dto/projectTagDTO';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
-import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import {
+	MatAutocompleteModule,
+	MatAutocompleteSelectedEvent,
+} from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
 
 @Component({
 	selector: 'app-edit-project-modal',
@@ -71,11 +81,11 @@ export class EditProjectModalComponent implements OnInit {
 	filteredTags$!: Observable<ProjectTag[]>;
 	@ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
 
-
 	constructor(
 		public dialogRef: MatDialogRef<EditProjectModalComponent>,
 		@Inject(MAT_DIALOG_DATA) public project: Project,
 		private projectsSvc: ProjectsService,
+		private loadingSvc: LoadingLayerService,
 	) {}
 
 	ngOnInit() {
@@ -116,30 +126,30 @@ export class EditProjectModalComponent implements OnInit {
 
 	onSubmit() {
 		if (this.projectFormGroup.valid == false) return;
-
-		let tags = this.selectedTags.map(tag => tag['@id']) as string[];
+		this.loadingSvc.loading = true;
+		let tags = this.selectedTags.map((tag) => tag['@id']) as string[];
 
 		let projectDTO = new ProjectDTO(
 			this.projectFormGroup.get('name')?.value,
 			this.projectFormGroup.get('description')?.value,
-			tags
+			tags,
 		);
 
 		// if preview is not null let's make a double request for update data and the preview
 		if (this.previewFile) {
 			let submitForm$ = scheduled(
 				[
-					this.projectsSvc
-						.editProject(projectDTO, this.project.id),
+					this.projectsSvc.editProject(projectDTO, this.project.id),
 					this.projectsSvc.uploadProjectPreview(
 						this.previewFile,
 						this.project.id,
 					),
 				],
 				asyncScheduler,
-			).pipe(concatAll(), last())
+			).pipe(concatAll(), last());
 
 			submitForm$.subscribe((editedProject) => {
+				this.loadingSvc.loading = false;
 				this.dialogRef.close(editedProject);
 			});
 
@@ -148,11 +158,13 @@ export class EditProjectModalComponent implements OnInit {
 
 		// if preview is not null let's make a single request for update data
 		this.projectsSvc
-		.editProject(projectDTO, this.project.id)
-		.subscribe((editedProject) => this.dialogRef.close(editedProject));
+			.editProject(projectDTO, this.project.id)
+			.subscribe((editedProject) => {
+				this.loadingSvc.loading = false;
+				this.dialogRef.close(editedProject);
+			});
 	}
-	
-	
+
 	removeTag(index: number): void {
 		this.selectedTags.splice(index, 1);
 		this.projectFormGroup.markAsDirty();
@@ -171,17 +183,17 @@ export class EditProjectModalComponent implements OnInit {
 				this.selectedTags.push(projectTag);
 				this.cleanTagInput();
 				this.tagInputLoading = false;
-			}
-		})
+			},
+		});
 	}
-	
+
 	selectTag(e: MatAutocompleteSelectedEvent) {
 		let selectedTag = e.option.value;
 		this.cleanTagInput();
 		this.selectedTags.push(selectedTag);
 		this.projectFormGroup.markAsDirty();
 	}
-	
+
 	private cleanTagInput() {
 		this.tagInput.nativeElement.value = '';
 		this.tagInputControl.setValue(null);

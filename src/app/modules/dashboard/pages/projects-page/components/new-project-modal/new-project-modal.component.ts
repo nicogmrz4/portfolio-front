@@ -16,7 +16,7 @@ import {
 	MatAutocompleteModule,
 	MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProjectDTO } from '@modules/dashboard/dto/projectDTO';
 import { ProjectFormGroup } from '../../forms-group/projectFormGroup';
 import { ProjectsService } from '@modules/dashboard/services/projects.service';
@@ -25,6 +25,7 @@ import { fileToDataURL } from '@utils/index';
 import { Observable, map, startWith, switchMap } from 'rxjs';
 import { ProjectTag } from '@modules/dashboard/interfaces/projectTag';
 import { ProjectTagDTO } from '@modules/dashboard/dto/projectTagDTO';
+import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
 
 @Component({
 	selector: 'app-new-project-modal',
@@ -65,6 +66,7 @@ export class NewProjectModalComponent implements OnInit {
 	constructor(
 		public dialogRef: MatDialogRef<NewProjectModalComponent>,
 		private projectsSvc: ProjectsService,
+		private loadingSvc: LoadingLayerService,
 	) {}
 
 	ngOnInit(): void {
@@ -93,19 +95,20 @@ export class NewProjectModalComponent implements OnInit {
 
 	onSubmit() {
 		if (this.projectFormGroup.valid == false) return;
-
-		let tags = this.selectedTags.map(tag => tag['@id']) as string[];
+		this.loadingSvc.loading = true;
+		let tags = this.selectedTags.map((tag) => tag['@id']) as string[];
 
 		let projectDTO = new ProjectDTO(
 			this.projectFormGroup.get('name')?.value,
 			this.projectFormGroup.get('description')?.value,
-			tags
+			tags,
 		);
 
 		this.projectsSvc
 			.createProject(projectDTO)
 			.pipe(
 				switchMap((newProject) => {
+					this.loadingSvc.loading = true;
 					return this.projectsSvc.uploadProjectPreview(
 						this.projectPreview,
 						newProject.id,
@@ -113,7 +116,10 @@ export class NewProjectModalComponent implements OnInit {
 				}),
 			)
 			.subscribe({
-				next: (project) => this.dialogRef.close(project),
+				next: (project) => {
+					this.loadingSvc.loading = false;
+					this.dialogRef.close(project);
+				},
 			});
 	}
 
@@ -133,8 +139,8 @@ export class NewProjectModalComponent implements OnInit {
 				this.selectedTags.push(projectTag);
 				this.cleanTagInput();
 				this.tagInputLoading = false;
-			}
-		})
+			},
+		});
 	}
 
 	selectTag(e: MatAutocompleteSelectedEvent) {

@@ -14,6 +14,7 @@ import { EditSkillModalComponent } from '../edit-skill-modal/edit-skill-modal.co
 import { Skill } from '@modules/dashboard/interfaces/skill';
 import { ConfirmDialogComponent } from '@modules/dashboard/components/confirm-dialog/confirm-dialog.component';
 import { switchMap } from 'rxjs';
+import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
 
 @Component({
 	selector: 'app-skills-table',
@@ -35,11 +36,16 @@ export class SkillsTableComponent implements AfterViewInit, OnInit {
 	constructor(
 		private skillSvc: SkillsService,
 		private dialog: MatDialog,
+		private loadingSvc: LoadingLayerService,
 	) {}
 
 	ngOnInit(): void {
+		this.loadingSvc.loading = true;
 		this.skillSvc.getSkills().subscribe({
-			next: (res) => this.dataSource.setSkills(res['hydra:member']),
+			next: (res) => {
+				this.dataSource.setSkills(res['hydra:member']);
+				this.loadingSvc.loading = false;
+			},
 		});
 	}
 
@@ -56,7 +62,7 @@ export class SkillsTableComponent implements AfterViewInit, OnInit {
 			data: skill,
 		});
 
-		dialogRef.afterClosed().subscribe((skill? : Skill) => {
+		dialogRef.afterClosed().subscribe((skill?: Skill) => {
 			if (skill) {
 				this.dataSource.replaceSkillByIndex(skill, index);
 			}
@@ -64,7 +70,7 @@ export class SkillsTableComponent implements AfterViewInit, OnInit {
 	}
 
 	openConfirmDelete(skill: Skill, index: number): void {
-    // Open confirm dialog
+		// Open confirm dialog
 		const dialogRef = this.dialog.open(ConfirmDialogComponent, {
 			data: {
 				title: 'Are you sure to proced?',
@@ -77,13 +83,19 @@ export class SkillsTableComponent implements AfterViewInit, OnInit {
 			autoFocus: false,
 		});
 
-    // On accept dialog
+		// On accept dialog
 		dialogRef.componentInstance
 			.onAccept()
-			.pipe(switchMap(() => this.skillSvc.deleteSkill(skill.id)))
+			.pipe(
+				switchMap(() => {
+					this.loadingSvc.loading = true;
+					return this.skillSvc.deleteSkill(skill.id);
+				}),
+			)
 			.subscribe(() => {
-        this.dataSource.deleteSkillByIndex(index)
-        dialogRef.close();
-      });
+				this.dataSource.deleteSkillByIndex(index);
+				this.loadingSvc.loading = false;
+				dialogRef.close();
+			});
 	}
 }

@@ -20,6 +20,7 @@ import { SkillsService } from '@modules/dashboard/services/skills.service';
 import { fileToDataURL } from '@utils/index';
 import { switchMap } from 'rxjs';
 import { SkillCardComponent } from '@modules/home/components/skill-card/skill-card.component';
+import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
 
 @Component({
 	selector: 'app-new-skill-modal',
@@ -52,6 +53,7 @@ export class NewSkillModalComponent {
 	constructor(
 		private dialogRef: MatDialogRef<NewSkillModalComponent>,
 		private skillsSvc: SkillsService,
+		private loadingSvc: LoadingLayerService
 	) {}
 
 	formatLabel(value: number): string {
@@ -71,6 +73,7 @@ export class NewSkillModalComponent {
 
 	onSubmit() {
 		if (this.skillFormGroup.valid == false) return;
+		this.loadingSvc.loading = true;
 
 		let skillDTO = new SkillDTO(
 			this.skillFormGroup.name.value,
@@ -85,7 +88,10 @@ export class NewSkillModalComponent {
 				),
 			)
 			.subscribe({
-				next: (skill) => this.dialogRef.close(skill),
+				next: (skill) => {
+					this.dialogRef.close(skill);
+					this.loadingSvc.loading = false;
+				},
 			});
 	}
 }
