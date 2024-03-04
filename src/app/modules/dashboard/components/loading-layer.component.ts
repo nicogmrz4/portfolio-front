@@ -14,7 +14,7 @@ import { LoadingLayerService } from '../services/loading-layer.service';
     [class.tw-animate-fade-out]="(loadingSvc.loading | async) == false"
     (animationstart)="animationStartHandle($event)"
     (animationend)="animationEndHandle($event)"
-    class="tw-fixed tw-bg-black tw-bg-opacity-60 tw-z-50 tw-left-0 tw-top-0 tw-w-lvw tw-h-lvh tw-flex tw-justify-center tw-items-center tw-animate-duration-fast"
+    class="tw-fixed tw-bg-black tw-bg-opacity-60 tw-z-[1000000] tw-left-0 tw-top-0 tw-w-lvw tw-h-lvh tw-flex tw-justify-center tw-items-center tw-animate-duration-fast"
     >
       <mat-spinner diameter="80" color="primary"></mat-spinner>
     </div>
