@@ -4,7 +4,7 @@ import { ProjectsComponent } from './sections/projects/projects.component';
 import { SkillsComponent } from './sections/skills/skills.component';
 import { ContactComponent } from './sections/contact/contact.component';
 import { CommonService } from './services/common.service';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -24,9 +24,4 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 })
 export class HomeComponent {
   constructor(private commonSvc: CommonService) {}
-
-  ngOnInit() {
-    this.commonSvc.getProjects().subscribe();
-    this.commonSvc.getSkills().subscribe();
-  }
 }
