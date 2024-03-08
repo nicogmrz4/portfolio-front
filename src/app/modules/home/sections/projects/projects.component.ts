@@ -1,7 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Project } from '@modules/dashboard/interfaces/project';
 import { ProjectCardComponent } from '@modules/home/components/project-card/project-card.component';
-import { CommonService } from '@modules/home/services/common.service';
 import { SectionTitleComponent } from '@shared/components/section-title.component';
 
 @Component({
@@ -12,17 +11,8 @@ import { SectionTitleComponent } from '@shared/components/section-title.componen
   imports: [
     ProjectCardComponent,
     SectionTitleComponent
-  ],
-  providers: [
-    CommonService
   ]
 })
-export class ProjectsComponent implements OnInit {
-  projects: Project[] = []; 
-  
-  constructor(private commonSvc: CommonService) {}
-
-  ngOnInit(): void {
-    this.commonSvc.getProjects().subscribe(res => this.projects = res['hydra:member']);
-  }
+export class ProjectsComponent {
+  @Input() projects: Project[] = []; 
 }
