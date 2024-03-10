@@ -29,4 +29,8 @@ export class AuthService {
   thereIsToken() {
     return this.getToken() != null;
   }
+
+  unsetTokenIfExist() {
+    localStorage.removeItem('token');
+  }
 }
