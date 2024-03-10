@@ -1,0 +1,29 @@
+<div
+	class="tw-w-lvw tw-h-lvh tw-flex tw-justify-center tw-items-center tw-bg-neutral-200"
+>
+	<mat-card class="tw-w-[400px]">
+		<mat-card-content>
+			<mat-card-title>
+				<h3>Login form</h3>
+			</mat-card-title>
+			<form
+				#loginForm="ngForm"
+				(ngSubmit)="onSubmit()"
+				[formGroup]="loginFormGroup"
+				class="tw-flex tw-flex-col tw-mt-4"
+			>
+				<!-- Username field -->
+				<mat-form-field>
+					<mat-label>Username</mat-label>
+					<input matInput formControlName="username" type="text" />
+				</mat-form-field>
+				<!-- Password field -->
+				<mat-form-field>
+					<mat-label>Password</mat-label>
+					<input matInput formControlName="password" type="password" />
+				</mat-form-field>
+				<button mat-raised-button color="primary" type="submit">Login</button>
+			</form>
+		</mat-card-content>
+	</mat-card>
+</div>

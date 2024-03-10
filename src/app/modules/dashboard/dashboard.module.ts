@@ -18,7 +18,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { ProjectsTableComponent } from './pages/projects-page/components/projects-table/projects-table.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { NewProjectModalComponent } from './pages/projects-page/components/new-project-modal/new-project-modal.component';
 import { SkillsTableComponent } from './pages/skills-page/components/skills-table/skills-table.component';
 import { MatInputModule } from '@angular/material/input';
@@ -39,7 +39,6 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     DashboardRoutingModule,
     DashboardComponent,
-    HttpClientModule,
   ],
   providers: [],
 })
