@@ -26,7 +26,6 @@ export class LoadingLayerComponent {
 	constructor(public loadingSvc: LoadingLayerService) {}
 
   animationStartHandle(e: AnimationEvent): void {
-    console.log(e.animationName);
     if (e.animationName != 'tw-fade-in') return;
     this.canHidde = false;
   }
