@@ -17,8 +17,8 @@ export class AuthErrorHandler {
 	private readonly authSvc = inject(AuthService);
 	private readonly router = inject(Router);
 
-	private handle(errRes: HttpErrorResponse & { error: JWTError }) {
-		if (errRes.status != 401) return EMPTY;
+	private handle(errRes: HttpErrorResponse) {
+		if (errRes.status != 401) return throwError(() => errRes);
 
 		const errMessage = errRes.error.message;
 
