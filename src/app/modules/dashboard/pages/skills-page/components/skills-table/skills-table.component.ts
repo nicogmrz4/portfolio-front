@@ -22,7 +22,6 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 	styleUrl: './skills-table.component.scss',
 	standalone: true,
 	imports: [MatTableModule, MatPaginatorModule, MatIconModule, MatButtonModule],
-	providers: [SkillsService],
 })
 export class SkillsTableComponent implements AfterViewInit, OnInit {
 	@ViewChild(MatPaginator) paginator!: MatPaginator;

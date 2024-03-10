@@ -8,7 +8,6 @@ import {
 import { MatError, MatHint, MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
 import { MatButton } from '@angular/material/button';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -46,10 +45,8 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		MatIconModule,
 		MatChipsModule,
 		MatAutocompleteModule,
-		MatProgressSpinnerModule,
-		HttpClientModule,
-	],
-	providers: [ProjectsService],
+		MatProgressSpinnerModule
+	]
 })
 export class NewProjectModalComponent implements OnInit {
 	projectFormGroup: ProjectFormGroup = new ProjectFormGroup();

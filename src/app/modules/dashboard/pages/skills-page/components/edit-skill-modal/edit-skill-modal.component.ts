@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -41,10 +40,8 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		ReactiveFormsModule,
 		MatIconModule,
 		MatSliderModule,
-		SkillCardComponent,
-		HttpClientModule,
+		SkillCardComponent
 	],
-	providers: [SkillsService],
 	templateUrl: './edit-skill-modal.component.html',
 	styleUrl: './edit-skill-modal.component.scss',
 })

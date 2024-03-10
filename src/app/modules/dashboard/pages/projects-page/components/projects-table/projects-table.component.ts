@@ -25,8 +25,7 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		MatIconModule,
 		MatButtonModule,
 		CommonModule,
-	],
-	providers: [ProjectsService],
+	]
 })
 export class ProjectsTableComponent implements AfterViewInit, OnInit {
 	@ViewChild(MatPaginator) paginator!: MatPaginator;

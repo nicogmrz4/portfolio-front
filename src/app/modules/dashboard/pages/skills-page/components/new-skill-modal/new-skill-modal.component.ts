@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component, Inject } from '@angular/core';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
-	MAT_DIALOG_DATA,
 	MatDialogActions,
 	MatDialogClose,
 	MatDialogContent,
@@ -41,7 +40,6 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		SkillCardComponent,
 		HttpClientModule,
 	],
-	providers: [SkillsService],
 	templateUrl: './new-skill-modal.component.html',
 	styleUrl: './new-skill-modal.component.scss',
 })

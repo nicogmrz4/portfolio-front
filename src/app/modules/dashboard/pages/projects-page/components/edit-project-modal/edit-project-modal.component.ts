@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import {
 	Component,
 	ElementRef,
@@ -63,10 +62,8 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		MatIconModule,
 		MatChipsModule,
 		MatAutocompleteModule,
-		MatProgressSpinnerModule,
-		HttpClientModule,
-	],
-	providers: [ProjectsService],
+		MatProgressSpinnerModule
+	]
 })
 export class EditProjectModalComponent implements OnInit {
 	projectFormGroup: ProjectFormGroup = new ProjectFormGroup();
