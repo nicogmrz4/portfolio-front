@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HomeModule } from '@modules/home/home.module';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { tokenInterceptor } from '@modules/dashboard/interceptors/token.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -16,6 +18,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
       useClass: PathLocationStrategy,
     },
     provideAnimationsAsync(),
+    provideHttpClient(
+      withInterceptors([tokenInterceptor])
+    )
   ],
   bootstrap: [AppComponent],
 })
