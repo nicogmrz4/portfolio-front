@@ -6,5 +6,9 @@
         @for (skill of skills; track $index) {
             <app-skill-card [icon]="skill.icon" [name]="skill.name" [size]="skill.iconSize"></app-skill-card>
         }
+
+        @empty {
+            <p class="tw-my-52 tw-font-bold tw-text-3xl tw-text-slate-500">NO HAY NADA POR ACÁ...</p>
+        }
     </div>
 </section>
