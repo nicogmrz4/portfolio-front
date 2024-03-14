@@ -9,6 +9,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { tokenInterceptor } from '@modules/dashboard/interceptors/token.interceptor';
 import { authInterceptor } from '@modules/dashboard/interceptors/auth.interceptor';
+import { dashboardInterceptor } from '@modules/dashboard/interceptors/dashboard.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,7 +21,7 @@ import { authInterceptor } from '@modules/dashboard/interceptors/auth.intercepto
     },
     provideAnimationsAsync(),
     provideHttpClient(
-      withInterceptors([tokenInterceptor, authInterceptor])
+      withInterceptors([tokenInterceptor, authInterceptor, dashboardInterceptor])
     )
   ],
   bootstrap: [AppComponent],

@@ -8,6 +8,9 @@ export class SnackbarService {
   private readonly snackbar: MatSnackBar = inject(MatSnackBar);
 
   open(message: string, action: string = 'Ok', config: MatSnackBarConfig = {}) {
-    this.snackbar.open(message, action, config);
+    this.snackbar.open(message, action, {
+      duration: 5000,
+      ...config
+    }); 
   }
 }

@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import {
+	AfterViewInit,
+	Component,
+	OnInit,
+	ViewChild,
+	inject,
+} from '@angular/core';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -11,8 +17,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { EditProjectModalComponent } from '../edit-project-modal/edit-project-modal.component';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogComponent } from '@modules/dashboard/components/confirm-dialog/confirm-dialog.component';
-import { switchMap } from 'rxjs';
+import { catchError } from 'rxjs';
 import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
+import { ProjectErrorHandler } from '@modules/dashboard/handlers/projectErrorHandler';
 
 @Component({
 	selector: 'app-projects-table',
@@ -25,9 +32,11 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		MatIconModule,
 		MatButtonModule,
 		CommonModule,
-	]
+	],
 })
 export class ProjectsTableComponent implements AfterViewInit, OnInit {
+	private readonly _projectErrorHandler = inject(ProjectErrorHandler);
+
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 	@ViewChild(MatTable) table!: MatTable<Project>;
@@ -45,11 +54,13 @@ export class ProjectsTableComponent implements AfterViewInit, OnInit {
 
 	ngOnInit(): void {
 		this.loadingSvc.loading = true;
-		this.projectsSvc.getProjects().subscribe({
-			next: (res) => {
-				this.dataSource.setProjects(res['hydra:member']);
-				this.loadingSvc.loading = false;
-			},
+		const _getProjects$ = this.projectsSvc
+			.getProjects()
+			.pipe(catchError(this._projectErrorHandler.handleLoadError));
+
+		_getProjects$.subscribe((res) => {
+			this.dataSource.setProjects(res['hydra:member']);
+			this.loadingSvc.loading = false;
 		});
 	}
 
@@ -94,18 +105,19 @@ export class ProjectsTableComponent implements AfterViewInit, OnInit {
 		});
 
 		// On accept dialog
-		dialogRef.componentInstance
-			.onAccept()
-			.pipe(
-				switchMap(() => {
-					this.loadingSvc.loading = true;
-					return this.projectsSvc.deleteProject(project.id);
-				}),
-			)
-			.subscribe(() => {
+		dialogRef.componentInstance.onAccept().subscribe(() => {
+			this.onConfirmDelete(project.id).subscribe(() => {
 				this.loadingSvc.loading = false;
 				this.dataSource.deleteByIndex(index);
 				dialogRef.close();
 			});
+		});
+	}
+
+	onConfirmDelete(projectId: number) {
+		this.loadingSvc.loading = true;
+		return this.projectsSvc
+			.deleteProject(projectId)
+			.pipe(catchError(this._projectErrorHandler.handleDeleteError));
 	}
 }

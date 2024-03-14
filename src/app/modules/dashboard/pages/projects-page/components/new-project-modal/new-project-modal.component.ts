@@ -7,7 +7,13 @@ import {
 } from '@angular/material/dialog';
 import { MatError, MatHint, MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+	Component,
+	ElementRef,
+	OnInit,
+	ViewChild,
+	inject,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -21,10 +27,11 @@ import { ProjectFormGroup } from '../../forms-group/projectFormGroup';
 import { ProjectsService } from '@modules/dashboard/services/projects.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { fileToDataURL } from '@utils/index';
-import { Observable, map, startWith, switchMap } from 'rxjs';
+import { Observable, catchError, map, startWith, switchMap } from 'rxjs';
 import { ProjectTag } from '@modules/dashboard/interfaces/projectTag';
 import { ProjectTagDTO } from '@modules/dashboard/dto/projectTagDTO';
 import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
+import { ProjectErrorHandler } from '@modules/dashboard/handlers/projectErrorHandler';
 
 @Component({
 	selector: 'app-new-project-modal',
@@ -45,10 +52,13 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		MatIconModule,
 		MatChipsModule,
 		MatAutocompleteModule,
-		MatProgressSpinnerModule
-	]
+		MatProgressSpinnerModule,
+	],
 })
 export class NewProjectModalComponent implements OnInit {
+	private _projectErrorHandler: ProjectErrorHandler =
+		inject(ProjectErrorHandler);
+
 	projectFormGroup: ProjectFormGroup = new ProjectFormGroup();
 	projectPreview!: File;
 	previewAsDataURL!: string;
@@ -101,23 +111,19 @@ export class NewProjectModalComponent implements OnInit {
 			tags,
 		);
 
-		this.projectsSvc
+		const _createProject$ = this.projectsSvc
 			.createProject(projectDTO)
-			.pipe(
-				switchMap((newProject) => {
-					this.loadingSvc.loading = true;
-					return this.projectsSvc.uploadProjectPreview(
-						this.projectPreview,
-						newProject.id,
-					);
-				}),
-			)
-			.subscribe({
-				next: (project) => {
-					this.loadingSvc.loading = false;
-					this.dialogRef.close(project);
-				},
+			.pipe(catchError(this._projectErrorHandler.handleCreateError));
+
+		_createProject$.subscribe((newProject) => {
+			const _uploadProjectPreview$ = this.projectsSvc
+				.uploadProjectPreview(this.projectPreview, newProject.id)
+				.pipe(catchError(this._projectErrorHandler.handleUploadPreviewError));
+			_uploadProjectPreview$.subscribe((project) => {
+				this.loadingSvc.loading = false;
+				this.dialogRef.close(project);
 			});
+		});
 	}
 
 	removeTag(index: number): void {

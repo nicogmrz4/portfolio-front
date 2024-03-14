@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -17,9 +17,10 @@ import { SkillDTO } from '@modules/dashboard/dto/skillDTO';
 import { SkillFormGroup } from '@modules/dashboard/pages/projects-page/forms-group/skiillFormGroup';
 import { SkillsService } from '@modules/dashboard/services/skills.service';
 import { fileToDataURL } from '@utils/index';
-import { switchMap } from 'rxjs';
+import { catchError, switchMap } from 'rxjs';
 import { SkillCardComponent } from '@modules/home/components/skill-card/skill-card.component';
 import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
+import { SkillErrorHandler } from '@modules/dashboard/handlers/skillErrorHandler';
 
 @Component({
 	selector: 'app-new-skill-modal',
@@ -44,6 +45,8 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 	styleUrl: './new-skill-modal.component.scss',
 })
 export class NewSkillModalComponent {
+	_skillErrorHandler: SkillErrorHandler = inject(SkillErrorHandler);
+
 	iconFile!: File;
 	iconAsDataURL: string = '';
 	skillFormGroup: SkillFormGroup = new SkillFormGroup();
@@ -78,18 +81,16 @@ export class NewSkillModalComponent {
 			this.skillFormGroup.iconSize.value,
 		);
 
-		this.skillsSvc
-			.createSkill(skillDTO)
-			.pipe(
-				switchMap((newSkill) =>
-					this.skillsSvc.uploadSkillIcon(this.iconFile, newSkill.id),
-				),
-			)
-			.subscribe({
-				next: (skill) => {
-					this.dialogRef.close(skill);
-					this.loadingSvc.loading = false;
-				},
-			});
+		const _createSkill$ = this.skillsSvc.createSkill(skillDTO)
+			.pipe(catchError(this._skillErrorHandler.handleCreateError));
+
+		_createSkill$.subscribe((newSkill) => {
+			const _uploadSkillIcon$ = this.skillsSvc.uploadSkillIcon(this.iconFile, newSkill.id)
+				.pipe(catchError(this._skillErrorHandler.handleUploadIconError))
+			_uploadSkillIcon$.subscribe((skill) => {
+				this.loadingSvc.loading = false;
+				this.dialogRef.close(skill);
+			})
+		})
 	}
 }

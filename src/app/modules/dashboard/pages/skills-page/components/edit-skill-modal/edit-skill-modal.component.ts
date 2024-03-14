@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import {
@@ -18,11 +18,19 @@ import { Skill } from '@modules/dashboard/interfaces/skill';
 import { SkillFormGroup } from '@modules/dashboard/pages/projects-page/forms-group/skiillFormGroup';
 import { SkillsService } from '@modules/dashboard/services/skills.service';
 import { fileToDataURL } from '@utils/index';
-import { asyncScheduler, concatAll, last, scheduled } from 'rxjs';
+import {
+	asyncScheduler,
+	catchError,
+	concatAll,
+	exhaustAll,
+	last,
+	scheduled,
+} from 'rxjs';
 import { environment } from '../../../../../../../environments/environment';
 import { SkillCardComponent } from '@modules/home/components/skill-card/skill-card.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
+import { SkillErrorHandler } from '@modules/dashboard/handlers/skillErrorHandler';
 
 @Component({
 	selector: 'app-edit-skill-modal',
@@ -40,12 +48,14 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		ReactiveFormsModule,
 		MatIconModule,
 		MatSliderModule,
-		SkillCardComponent
+		SkillCardComponent,
 	],
 	templateUrl: './edit-skill-modal.component.html',
 	styleUrl: './edit-skill-modal.component.scss',
 })
 export class EditSkillModalComponent implements OnInit {
+	_skillErrorHandler: SkillErrorHandler = inject(SkillErrorHandler);
+
 	iconFile!: File;
 	iconAsDataURL: string = '';
 	skillFormGroup: SkillFormGroup = new SkillFormGroup();
@@ -91,29 +101,29 @@ export class EditSkillModalComponent implements OnInit {
 			this.skillFormGroup.iconSize.value,
 		);
 
+		const _editSkill$ = this.skillsSvc
+			.editSkill(skillDTO, this.skill.id)
+			.pipe(catchError(this._skillErrorHandler.handleEditError));
+
 		// if icon isn't null let's make a double request, one for update data and other for the icon
 		if (this.iconFile) {
-			let submitForm$ = scheduled(
-				[
-					this.skillsSvc.editSkill(skillDTO, this.skill.id),
-					this.skillsSvc.uploadSkillIcon(this.iconFile, this.skill.id),
-				],
-				asyncScheduler,
-			).pipe(concatAll(), last());
-
-			submitForm$.subscribe((editedSkill: Skill) => {
-				this.loadingSvc.loading = false;
-				this.dialogRef.close(editedSkill);
+			_editSkill$.subscribe((editedSkill) => {
+				const _uploadSkillIcon$ = this.skillsSvc
+					.uploadSkillIcon(this.iconFile, this.skill.id)
+					.pipe(catchError(this._skillErrorHandler.handleUploadIconError));
+				_uploadSkillIcon$.subscribe((editedSkillWithUploadIcon) => {
+					this.loadingSvc.loading = false;
+					this.dialogRef.close(editedSkillWithUploadIcon);
+				});
 			});
 			return;
 		}
 
 		// if icon is null let's make a single request for update data
-		this.skillsSvc
-			.editSkill(skillDTO, this.skill.id)
-			.subscribe((editedSkill: Skill) => {
-				this.dialogRef.close(editedSkill)
-				this.loadingSvc.loading = false;
-			});
+
+		_editSkill$.subscribe((editedSkill: Skill) => {
+			this.dialogRef.close(editedSkill);
+			this.loadingSvc.loading = false;
+		});
 	}
 }

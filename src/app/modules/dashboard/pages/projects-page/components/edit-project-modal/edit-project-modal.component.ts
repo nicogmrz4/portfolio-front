@@ -5,6 +5,7 @@ import {
 	Inject,
 	OnInit,
 	ViewChild,
+	inject,
 } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
@@ -26,7 +27,8 @@ import { fileToDataURL } from '@utils/index';
 import {
 	Observable,
 	asyncScheduler,
-	concatAll,
+	catchError,
+	exhaustAll,
 	last,
 	map,
 	scheduled,
@@ -42,6 +44,7 @@ import {
 } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
+import { ProjectErrorHandler } from '@modules/dashboard/handlers/projectErrorHandler';
 
 @Component({
 	selector: 'app-edit-project-modal',
@@ -62,10 +65,11 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 		MatIconModule,
 		MatChipsModule,
 		MatAutocompleteModule,
-		MatProgressSpinnerModule
-	]
+		MatProgressSpinnerModule,
+	],
 })
 export class EditProjectModalComponent implements OnInit {
+	private readonly _projectErrorHandler = inject(ProjectErrorHandler);
 	projectFormGroup: ProjectFormGroup = new ProjectFormGroup();
 	previewFile!: File;
 	previewAsDataURL: string = '';
@@ -132,34 +136,30 @@ export class EditProjectModalComponent implements OnInit {
 			tags,
 		);
 
+		const _editProject$ = this.projectsSvc
+			.editProject(projectDTO, this.project.id)
+			.pipe(catchError(this._projectErrorHandler.handleEditError));
+
 		// if preview is not null let's make a double request for update data and the preview
 		if (this.previewFile) {
-			let submitForm$ = scheduled(
-				[
-					this.projectsSvc.editProject(projectDTO, this.project.id),
-					this.projectsSvc.uploadProjectPreview(
-						this.previewFile,
-						this.project.id,
-					),
-				],
-				asyncScheduler,
-			).pipe(concatAll(), last());
-
-			submitForm$.subscribe((editedProject) => {
-				this.loadingSvc.loading = false;
-				this.dialogRef.close(editedProject);
+			_editProject$.subscribe((editedProject) => {
+				const _uploadProjectPreview$ = this.projectsSvc
+					.uploadProjectPreview(this.previewFile, this.project.id)
+					.pipe(catchError(this._projectErrorHandler.handleUploadPreviewError));
+				_uploadProjectPreview$.subscribe((editedProjectWithPreview) => {
+					this.loadingSvc.loading = false;
+					this.dialogRef.close(editedProjectWithPreview);
+				})
 			});
-
 			return;
 		}
 
 		// if preview is not null let's make a single request for update data
-		this.projectsSvc
-			.editProject(projectDTO, this.project.id)
-			.subscribe((editedProject) => {
-				this.loadingSvc.loading = false;
-				this.dialogRef.close(editedProject);
-			});
+
+		_editProject$.subscribe((editedProject) => {
+			this.loadingSvc.loading = false;
+			this.dialogRef.close(editedProject);
+		});
 	}
 
 	removeTag(index: number): void {

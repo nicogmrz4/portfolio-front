@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import {
+	AfterViewInit,
+	Component,
+	OnInit,
+	ViewChild,
+	inject,
+} from '@angular/core';
 import { MatTable, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -13,8 +19,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { EditSkillModalComponent } from '../edit-skill-modal/edit-skill-modal.component';
 import { Skill } from '@modules/dashboard/interfaces/skill';
 import { ConfirmDialogComponent } from '@modules/dashboard/components/confirm-dialog/confirm-dialog.component';
-import { switchMap } from 'rxjs';
+import { catchError } from 'rxjs';
 import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.service';
+import { ProjectErrorHandler } from '@modules/dashboard/handlers/projectErrorHandler';
+import { SkillErrorHandler } from '@modules/dashboard/handlers/skillErrorHandler';
 
 @Component({
 	selector: 'app-skills-table',
@@ -24,6 +32,8 @@ import { LoadingLayerService } from '@modules/dashboard/services/loading-layer.s
 	imports: [MatTableModule, MatPaginatorModule, MatIconModule, MatButtonModule],
 })
 export class SkillsTableComponent implements AfterViewInit, OnInit {
+	_skillErrorHandler: SkillErrorHandler = inject(SkillErrorHandler);
+
 	@ViewChild(MatPaginator) paginator!: MatPaginator;
 	@ViewChild(MatSort) sort!: MatSort;
 	@ViewChild(MatTable) table!: MatTable<SkillsTableItem>;
@@ -40,11 +50,13 @@ export class SkillsTableComponent implements AfterViewInit, OnInit {
 
 	ngOnInit(): void {
 		this.loadingSvc.loading = true;
-		this.skillSvc.getSkills().subscribe({
-			next: (res) => {
-				this.dataSource.setSkills(res['hydra:member']);
-				this.loadingSvc.loading = false;
-			},
+		const _getSkills$ = this.skillSvc
+			.getSkills()
+			.pipe(catchError(this._skillErrorHandler.handleLoadError));
+
+		_getSkills$.subscribe((res) => {
+			this.dataSource.setSkills(res['hydra:member']);
+			this.loadingSvc.loading = false;
 		});
 	}
 
@@ -83,18 +95,19 @@ export class SkillsTableComponent implements AfterViewInit, OnInit {
 		});
 
 		// On accept dialog
-		dialogRef.componentInstance
-			.onAccept()
-			.pipe(
-				switchMap(() => {
-					this.loadingSvc.loading = true;
-					return this.skillSvc.deleteSkill(skill.id);
-				}),
-			)
-			.subscribe(() => {
+		dialogRef.componentInstance.onAccept().subscribe(() => {
+			this.onConfirmDelete(skill.id).subscribe(() => {
 				this.dataSource.deleteSkillByIndex(index);
 				this.loadingSvc.loading = false;
 				dialogRef.close();
 			});
+		});
+	}
+
+	onConfirmDelete(skillId: number) {
+		this.loadingSvc.loading = true;
+		return this.skillSvc
+			.deleteSkill(skillId)
+			.pipe(catchError(this._skillErrorHandler.handleDeleteError));
 	}
 }
