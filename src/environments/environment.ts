@@ -1,3 +1,3 @@
 export const environment = {
-    apiUrl: '',
+    apiUrl: 'https://portfolio-api-81mt.onrender.com',
 };
