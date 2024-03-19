@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Skill } from '../interfaces/skill';
 import { HydraResponse } from '@shared/interfaces/hydraResponse';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { SkillDTO } from '../dto/skillDTO';
 
 const URL = environment.apiUrl + '/api/skills';
